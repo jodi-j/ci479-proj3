@@ -4,6 +4,15 @@ from pgmpy.inference import VariableElimination
 import numpy as np
 
 bayesNet = BayesianNetwork()
+bayesNet.add_node("A") #Patient Condition
+bayesNet.add_node("B") #Test Result
+bayesNet.add_node("C") #Treatment Decision
+bayesNet.add_node("D") #Outcome
+
+bayesNet.add_edge("A", "D")
+bayesNet.add_edge("B", "D")
+bayesNet.add_edge("C", "D")
+"""
 bayesNet.add_node("M")
 bayesNet.add_node("U")
 bayesNet.add_node("R")
@@ -25,6 +34,7 @@ cpd_R = TabularCPD('R', 2,
                    values=[[0.96, .86, .94, .82, .24, .15, .10, .05], [.04, .14, .06, .18, .76, .85, .90, .95]],
                    evidence=['M', 'B', 'U'], evidence_card=[2, 2,2])
 bayesNet.add_cpds(cpd_A, cpd_U, cpd_H, pd_S, cpd_R)
+"""
 bayesNet.check_model()
 print("Model is correct.")
 solver = VariableElimination(bayesNet)
