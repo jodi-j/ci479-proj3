@@ -43,7 +43,9 @@ print("\nQuery 1: Probability of Patient Condition A")
 print(result)
 
 #Query 2
-
+result = solver.query(variables=['B'], evidence={'A': 'poor'})
+print("\nQuery 2: Probability of Test Result B")
+print(result)
 
 #Query 3
 
