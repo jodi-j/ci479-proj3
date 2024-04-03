@@ -35,14 +35,32 @@ bayesNet.add_cpds(cpd_PatientCondition, cpd_TestResult, cpd_TreatmentDecision, c
 
 bayesNet.check_model()
 print("Model is correct.")
-
 solver = VariableElimination(bayesNet)
-'''
-result = solver.query(variables=['D'])
+
+#Query 1
+result = solver.query(variables=['A'])
+print("\nQuery 1: Probability of Patient Condition A")
 print(result)
-result = solver.query(variables=['R'], evidence={'M': 1})
-print("R| M", result)
-'''
+
+#Query 2
+
+
+#Query 3
+
+
+#Query 4
+
+
+#Query 5
+
+
+#Query 6
+
+
+#Query 7
+
+
+#Query 8
 
 
 #original code from model 7
