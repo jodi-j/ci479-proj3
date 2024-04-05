@@ -2,6 +2,7 @@ from pgmpy.models import BayesianNetwork
 from pgmpy.factors.discrete import TabularCPD
 from pgmpy.inference import VariableElimination
 import numpy as np
+import pandas as pd
 
 bayesNet = BayesianNetwork()
 bayesNet.add_node("A") #Patient Condition
@@ -38,31 +39,73 @@ print("Model is correct.")
 solver = VariableElimination(bayesNet)
 
 #Query 1
-result = solver.query(variables=['A'])
+result_a = solver.query(variables=['A'])
 print("\nQuery 1: Probability of Patient Condition A")
-print(result)
+print(result_a)
 
 #Query 2
-result = solver.query(variables=['B'], evidence={'A': 'poor'})
+result_b = solver.query(variables=['B'], evidence={'A': 'poor'})
 print("\nQuery 2: Probability of Test Result B")
-print(result)
+print(result_b)
 
 #Query 3
-
+result_c = solver.query(variables=['C'], evidence={'A': 'fair', 'B': 'negative'})
+print("\nQuery 3: Probability of Treatment Decision C")
+print(result_c)
 
 #Query 4
+result = solver.query(variables=['D'], evidence={'A': 'fair', 'B': 'positive', 'C': 'not treated'})
+print("\nQuery 4: Probability of Outcome D")
+print(result)
+
+# Extract the probabilities from the result
+probabilities_a = result_a.values
+probabilities_b = result_b.values
+probabilities_c = result_c.values
+
+# #Query 5
+print("\nQuery 5: Most Likely Outcome D")
+# Get the most likely states for each variable
+most_likely_state_c = result_c.state_names['C'][np.argmax(probabilities_c)]
+most_likely_outcome = solver.map_query(variables=['D'], evidence={'C': most_likely_state_c})
+print("The most likely outcome of D given the observed values of variables A, B, and C is:", most_likely_outcome['D'])
 
 
-#Query 5
+# Query 6
+print("\nQuery 6: Predicting Treatment Decision")
+# Get the most likely states for the patient's condition (A) and the test result (B)
+most_likely_state_a = result_a.state_names['A'][np.argmax(probabilities_a)]
+most_likely_state_b = result_b.state_names['B'][np.argmax(probabilities_b)]
+
+# Perform a MAP query to find the most likely treatment decision given the patient's condition and test result
+most_likely_treatment_decision = solver.map_query(variables=['C'], evidence={'A': most_likely_state_a, 'B': most_likely_state_b})
+print("The most likely treatment decision given the patient's condition and the test result is:", most_likely_treatment_decision['C'])
 
 
-#Query 6
+# Query 7: Sensitivity Analysis
 
+result_treated = solver.query(variables=['D'], evidence={'C': 'treated'})
+result_untreated = solver.query(variables=['D'], evidence={'C': 'not treated'})
+print("\nQuery 7: Sensitivity Analysis - Probability distribution of D for different values of C")
+print(result_treated)
+print(result_untreated)
 
-#Query 7
+# Query 8
+data = []
 
+for condition_A in ['good', 'fair', 'poor']:
+    for test_result_B in ['positive', 'negative']:
+        for treatment_decision_C in ['treated', 'not treated']:
+            result = solver.query(variables=['D'], evidence={'A': condition_A, 'B': test_result_B, 'C': treatment_decision_C})
+            probability_of_outcome_D = result.values
+            data.append({'Condition A': condition_A, 'Test Result B': test_result_B,
+                         'Treatment Decision C': treatment_decision_C,
+                         'Probability of Outcome D': probability_of_outcome_D[1]})
 
-#Query 8
+df = pd.DataFrame(data)
+
+print("\nQuery 8: Probability of Patient Outcome based on Varying Conditions")
+print(df)
 
 
 #original code from model 7
