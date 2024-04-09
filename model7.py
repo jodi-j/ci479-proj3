@@ -86,7 +86,9 @@ print("The most likely treatment decision given the patient's condition and the 
 result_treated = solver.query(variables=['D'], evidence={'C': 'treated'})
 result_untreated = solver.query(variables=['D'], evidence={'C': 'not treated'})
 print("\nQuery 7: Sensitivity Analysis - Probability distribution of D for different values of C")
+print("\nWhen C = 'treated':")
 print(result_treated)
+print ("\nWhen C = 'not treated':")
 print(result_untreated)
 
 # Query 8
